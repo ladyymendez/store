@@ -1,4 +1,4 @@
 {
-  "db":"mongodb://lady:lady43@ds259361.mlab.com:59361/employee",
+  "db":"mongodb+srv://lady43:lady43@shopping-store.82jvh.mongodb.net/shopping-store?retryWrites=true&w=majority",
   "port": 3000
 }
