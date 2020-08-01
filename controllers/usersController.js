@@ -1,28 +1,37 @@
 /* eslint-disable class-methods-use-this */
+const bcrypt = require('bcryptjs');
+const { INTERNAL_SERVER_ERROR } = require('http-status-codes');
 const { Users } = require('../models');
-const { logger } = require('../shared');
+const { response, validation: { register }, valid } = require('../helpers');
+
+const salt = bcrypt.genSaltSync(10);
 
 class UsersController {
   getAll(req, res) {
     return Users.find()
-      .then((data) => this.sendSuccess(data, req, res))
-      .catch((err) => this.sendError(res, err));
+      .then((data) => response.sendSuccess(data, req, res))
+      .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
 
   get(req, res) {
     return Users.findOne({ _id: req.params.id })
-      .then((data) => this.sendSuccess(data, req, res))
-      .catch((err) => this.sendError(res, err));
+      .then((data) => response.sendSuccess(data, req, res))
+      .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
 
   add(req, res) {
-    const user = new Users({
-      name: req.body.name,
-      type: req.body.type
-    });
-    return user.save()
-      .then((data) => this.sendSuccess(data, req, res))
-      .catch((err) => this.sendError(res, err));
+    const { name, email, password } = req.body;
+    return valid(register, req)
+      .then(() => {
+        const user = new Users({
+          name,
+          email,
+          password: bcrypt.hashSync(password, salt)
+        });
+        return user.save();
+      })
+      .then((data) => response.sendSuccess(data, req, res))
+      .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
 
   update(req, res) {
@@ -30,33 +39,16 @@ class UsersController {
       { _id: req.params.id },
       { $set: { name: req.body.name } }
     )
-      .then((data) => this.sendSuccess(data, req, res))
-      .catch((err) => this.sendError(res, err));
+      .then((data) => response.sendSuccess(data, req, res))
+      .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
 
   remove(req, res) {
     return Users.deleteOne({
       _id: req.params.id
     })
-      .then((data) => this.sendSuccess(data, req, res))
-      .catch((err) => this.sendError(res, err));
-  }
-
-  sendSuccess(data, req, res) {
-    if (!data || data.nModified === 0 || data.deletedCount === 0) {
-      logger.error(`ID not found in ${req.method}, url ${req.url}`);
-      return res.status(404).json({ message: 'resource not found' });
-    }
-    return res.status(200).json(data);
-  }
-
-  sendError(res, err) {
-    const msg = { message: err };
-    if (err.kind === 'ObjectId') {
-      msg.message = 'Error Id';
-    }
-    logger.error(`Error on the server, ${msg.message}`);
-    return res.status(500).json(msg);
+      .then((data) => response.sendSuccess(data, req, res))
+      .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
 }
 
