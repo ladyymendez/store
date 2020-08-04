@@ -1,4 +1,11 @@
 # Back-end Lady Mendez
+## Deploy
+Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son proporcionados creando un proyecto en Auth0.
+
+```
+ URL_TOKEN="XXXXXX" BODY_TOKEN="XXXX" npm run start-dev
+```
+
 ## Login
 **Envias:**  Credenciales para logear.
 
@@ -190,7 +197,7 @@
     "name": "XXXXXXXX",
     "price": 1000,
     "quantity": 10,
-    "category": "XXXXXX",
+    "brand": "XXXXXX",
     "description": "XXXXX",
     "nameOfGame": "XXXXXXX",
     "imagen": "data:image/png;base64,..."
@@ -206,7 +213,7 @@
     "name": "XXXXXXXX",
     "price": 1000,
     "quantity": 10,
-    "category": "XXXXXX",
+    "brand": "XXXXXX",
     "description": "XXXXX",
     "nameOfGame": "XXXXXXX",
     "imagen": "XXXXX"
@@ -237,7 +244,7 @@
     "name": "XXXXXXXX",
     "price": 1000,
     "quantity": 10,
-    "category": "XXXXXX",
+    "brand": "XXXXXX",
     "description": "XXXXX",
     "nameOfGame": "XXXXXXX",
     "imagen": "XXXXX"
@@ -262,7 +269,7 @@
     "name": "XXXXXXXX",
     "price": 1000,
     "quantity": 10,
-    "category": "XXXXXX",
+    "brand": "XXXXXX",
     "description": "XXXXX",
     "nameOfGame": "XXXXXXX",
     "imagen": "data:image/png;base64,..."
@@ -278,7 +285,7 @@
     "name": "XXXXXXXX",
     "price": 1000,
     "quantity": 10,
-    "category": "XXXXXX",
+    "brand": "XXXXXX",
     "description": "XXXXX",
     "nameOfGame": "XXXXXXX",
     "imagen": "XXXXXXXXX"
@@ -340,7 +347,7 @@ word -> busca por palabras en el campo de description del item
 [
     {
         "_id": "XXXXXXXXXXXX",
-        "category": "XXXXXXX",
+        "brand": "XXXXXXX",
         "createAt": "XXXXXXXX",
         "description": "XXXXXXXXX",
         "imagen": "http...",
@@ -375,7 +382,7 @@ word -> busca por palabras en el campo de description del item
 [
     {
         "_id": "XXXXXXXXXXXX",
-        "category": "XXXXXXX",
+        "brand": "XXXXXXX",
         "createAt": "XXXXXXXX",
         "description": "XXXXXXXXX",
         "imagen": "http...",
@@ -514,6 +521,28 @@ word -> busca por palabras en el campo de description del item
 
 **Obtienes:**  un objeto con los campos que se creo la orden
 
+```json
+{
+  "items": [
+    {
+      "idItem": "xxxxxxx",
+      "idSeller": "xxxxxxx",
+      "name": "xxxxxxx",
+      "price": 0,
+      "qty": 0
+    }
+  ],
+  "paymentMethod": "xxxxxxx",
+  "_id": "xxxxxxx",
+  "userId": "xxxxxxx",
+  "createdAt": "xxxxxxx",
+  "grandTotal": 0
+
+}
+
+```
+
+
 ## History
 
 **Request:**
@@ -568,7 +597,7 @@ word -> busca por palabras en el campo de description del item
 	/history/sales/XXXXXXXXXX
 ```
 
-**Obtienes:**  un array de objetos de las ordenes de venta 
+**Obtienes:**  un array de objetos de las ordenes de venta
 
 ```json
 [

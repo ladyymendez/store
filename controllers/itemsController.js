@@ -23,15 +23,16 @@ class ItemsController {
       name: req.body.name,
       price: req.body.price,
       quantity: req.body.quantity,
-      category: req.body.category,
+      attribute: req.body.attribute,
       description: req.body.description,
       nameOfGame: req.body.nameOfGame,
       imagen: urlName
     });
 
     return valid(itemsValidation.post(), req.body)
-      .then(() => this.saveImg(req, nameImg))
       .then(() => item.save())
+      .then((itemCreated) => this.saveImg(req, nameImg)
+        .then(() => itemCreated))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(
         res, INTERNAL_SERVER_ERROR, err.message
@@ -50,13 +51,13 @@ class ItemsController {
   update(req, res) {
     return valid(itemsValidation.param(), req.params)
       .then(() => Items.findById({ _id: req.params.id }))
-      .then((item) => Items.updateOne(
+      .then((item) => Items.findOneAndUpdate(
         { _id: req.params.id },
         {
           $set: {
             name: req.body.name || item.name,
             quantity: req.body.quantity || item.quantity,
-            category: req.body.category || item.category,
+            attribute: req.body.attribute || item.attribute,
             description: req.body.description || item.description,
             nameOfGame: req.body.nameOfGame || item.nameOfGame,
             imagen: req.body.imagen || item.imagen
@@ -109,17 +110,11 @@ class ItemsController {
   saveImg(req, nameImg) {
     const { imagen } = req.body;
     const base64Image = imagen.split(';base64,').pop();
-    return new Promise((resolve, reject) => {
-      fs.writeFile(
-        `imagen/${nameImg}`,
-        base64Image,
-        { encoding: 'base64' },
-        (err) => {
-          if (err) reject(err);
-          else resolve(base64Image);
-        }
-      );
-    });
+    return fs.writeFile(
+      `imagen/${nameImg}`,
+      base64Image,
+      { encoding: 'base64' }
+    );
   }
 }
 
