@@ -1,0 +1,8 @@
+{
+  "/inventory/:id": {
+    "GET": "getItemsBySeller"
+  },
+  "/catalog": {
+    "GET": "getAll"
+  }
+}

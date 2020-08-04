@@ -68,10 +68,17 @@ const orderValidation = {
   })
 };
 
+const inventoryValidation = {
+  params: () => Joi.object({
+    userid: Joi.string().min(12).required()
+  })
+};
+
 module.exports = {
   loginValidation,
   registerValidation,
   itemsValidation,
   cartValidation,
-  orderValidation
+  orderValidation,
+  inventoryValidation
 };
