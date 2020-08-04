@@ -3,21 +3,21 @@ const { logger } = require('../shared');
 
 class Log {
   sendSuccess(data, req, res) {
-    console.log('@@',data);
+    console.log('@@', data, req.url);
     let response = {};
     // data.nModified === 0
     // if (!data || data.deletedCount === 0) {
     //   logger.error(`ID not found in ${req.method}, url ${req.url}`);
     //   return res.status(404).json({ message: 'resource not found' });
     // }
-    // if (data === null || data.nModified === 0) {
-    //   logger.error(`ID not found in ${req.method}, url ${req.url}`);
-    //   return res.status(404).json({ message: 'Resource not found' });
-    // }
-    if (req.method === 'POST') {
+    if (data === null || data.nModified === 0) {
+      logger.error(`ID not found in ${req.method}, url ${req.url}`);
+      return res.status(404).json({ message: 'Resource not found' });
+    }
+    if (req.method === 'POST' && req.url === '/register') {
       response = { message: 'Register Successful' };
     }
-    if (req.method === 'PUT') {
+    if (req.method === 'PUT' && /\users\b/.test(req.url)) {
       response = { message: 'Updated Successful' };
     }
     if (req.method === 'DELETE') {
@@ -36,7 +36,7 @@ class Log {
       msg.message = 'Register Unsuccessful';
     }
 
-    logger.error(`Error on the server@@, ${msg.message}`);
+    logger.error(`Error on the server, ${msg.message}`);
     return res.status(stat).json(msg);
   }
 }

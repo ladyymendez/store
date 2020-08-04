@@ -13,7 +13,7 @@ const {
 class LoginController {
   validUser(req, res) {
     const { email, password } = req.body;
-    valid(loginValidation, req)
+    valid(loginValidation, req.body)
       .then(() => Users.findOne({ email }))
       .then((user) => {
         if (user && bcrypt.compareSync(password, user.password)) {
@@ -21,8 +21,13 @@ class LoginController {
         }
         throw new Error('Login Unsuccessful!');
       })
-      .then(() => this.token())
-      .then(({ data }) => response.sendSuccess(data, req, res))
+      .then(({ _id }) => this.token()
+        .then(({ data }) => {
+          const token = { ...data };
+          token.userid = _id;
+          return token;
+        }))
+      .then((data) => response.sendSuccess(data, req, res))
       .catch((error) => response.sendError(res, UNAUTHORIZED, error.message));
   }
 
