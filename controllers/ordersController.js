@@ -58,7 +58,8 @@ class OrdersController {
           .session(session)
       ))
       .then(() => session.commitTransaction())
-      .then(() => session.endSession());
+      .then(() => session.endSession())
+      .then(() => order);
   }
 }
 

@@ -50,7 +50,6 @@ const cartValidation = {
     quantity: Joi.number().required()
   }),
   put: () => Joi.object({
-    userid: Joi.string().min(12).required(),
     itemid: Joi.string().min(12).required(),
     quantity: Joi.number().required()
   }),

@@ -9,19 +9,28 @@ const {
 
 class InventoryController {
   getAll(req, res) {
-    // const { seller } = req.query;
-    // sellerId: { $ne: seller }
-    return Items.find({})
+    const filter = this.getFilter(req);
+    return Items.find(filter).sort(req.query.sort)
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
 
   getItemsBySeller(req, res) {
     const { id } = req.params;
+    const filter = this.getFilter(req);
+    filter.sellerId = id;
     return valid(idParams, req.params)
-      .then(() => Items.find({ sellerId: id }))
+      .then(() => Items.find(filter).sort(req.query.sort))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
+  }
+
+  getFilter(req) {
+    const filter = {};
+    if (req.query.word) {
+      filter.$text = { $search: req.query.word };
+    }
+    return filter;
   }
 }
 

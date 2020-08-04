@@ -14,7 +14,8 @@ class HistoryController {
   getShopping(req, res) {
     const { userid } = req.params;
     return valid(orderValidation.post(), req.params)
-      .then(() => Orders.find({ userId: ObjectId(userid) }))
+      .then(() => Orders.find({ userId: ObjectId(userid) })
+        .sort(req.query.sort))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }

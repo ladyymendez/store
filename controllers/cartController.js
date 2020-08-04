@@ -28,15 +28,16 @@ class CartController {
         },
         { $push: { cart: { idItem: ObjectId(itemid), quantity } } }
       ))
+      .then(() => Users.getItem(itemid, userid))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
 
   updateItem(req, res) {
-    const { itemid } = req.params;
-    const { quantity, userid } = req.body;
+    const { userid } = req.params;
+    const { quantity, itemid } = req.body;
     return valid(cartValidation.put(), req.body)
-      .then(() => valid(cartValidation.param(), req.params))
+      .then(() => valid(cartValidation.puser(), req.params))
       .then(() => Users.updateOne(
         {
           _id: ObjectId(userid),
@@ -44,15 +45,16 @@ class CartController {
         },
         { $set: { 'cart.$.quantity': quantity } }
       ))
+      .then(() => Users.getItem(itemid, userid))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
 
   removeItem(req, res) {
-    const { itemid } = req.params;
-    const { userid } = req.body;
-    return valid(cartValidation.param(), req.params)
-      .then(() => valid(cartValidation.puser(), req.body))
+    const { userid } = req.params;
+    const { itemid } = req.body;
+    return valid(cartValidation.puser(), req.params)
+      .then(() => valid(cartValidation.param(), req.body))
       .then(() => Users.updateOne(
         {
           _id: ObjectId(userid)

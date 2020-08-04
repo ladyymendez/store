@@ -3,9 +3,7 @@
     "POST": "add"
   },
   "/cart/:userid": {
-    "GET": "getAll"
-  },
-  "/cart/:itemid": {
+    "GET": "getAll",
     "PUT": "updateItem",
     "DELETE": "removeItem"
   }
