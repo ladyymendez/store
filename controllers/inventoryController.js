@@ -16,7 +16,7 @@ class InventoryController {
       .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
 
-  getItems(req, res) {
+  getItemsBySeller(req, res) {
     const { id } = req.params;
     return valid(idParams, req.params)
       .then(() => Items.find({ sellerId: id }))

@@ -11,5 +11,6 @@ module.exports = {
   itemsRoutes,
   cartRoutes,
   ordersRoutes,
-  inventoryRoutes
+  inventoryRoutes,
+  historyRoutes
 };

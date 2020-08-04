@@ -10,10 +10,10 @@ class Log {
     //   logger.error(`ID not found in ${req.method}, url ${req.url}`);
     //   return res.status(404).json({ message: 'resource not found' });
     // }
-    if (data === null || data.nModified === 0) {
-      logger.error(`ID not found in ${req.method}, url ${req.url}`);
-      return res.status(404).json({ message: 'Resource not found' });
-    }
+    // if (data === null || data.nModified === 0) {
+    //   logger.error(`ID not found in ${req.method}, url ${req.url}`);
+    //   return res.status(404).json({ message: 'Resource not found' });
+    // }
     if (req.method === 'POST') {
       response = { message: 'Register Successful' };
     }

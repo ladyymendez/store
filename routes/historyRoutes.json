@@ -1,0 +1,8 @@
+{
+  "/history/shopping/:userid":{
+    "GET": "getShopping"
+  },
+  "/history/sales/:userid":{
+    "GET": "getSales"
+  }
+}

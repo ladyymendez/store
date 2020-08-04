@@ -28,7 +28,7 @@ class OrdersController {
     order.items = shoppingCart.map((item) => (
       {
         idItem: ObjectId(item.idItem),
-        idSeller: ObjectId(item.idSeller),
+        idSeller: ObjectId(item.sellerId),
         name: item.name,
         price: item.price,
         qty: item.quantity
