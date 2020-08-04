@@ -43,8 +43,28 @@ const itemsValidation = {
   })
 };
 
+const cartValidation = {
+  post: () => Joi.object({
+    userid: Joi.string().min(12).required(),
+    itemid: Joi.string().min(12).required(),
+    quantity: Joi.number().required()
+  }),
+  put: () => Joi.object({
+    userid: Joi.string().min(12).required(),
+    itemid: Joi.string().min(12).required(),
+    quantity: Joi.number().required()
+  }),
+  param: () => Joi.object({
+    itemid: Joi.string().min(12).required()
+  }),
+  puser: () => Joi.object({
+    userid: Joi.string().min(12).required()
+  })
+};
+
 module.exports = {
   loginValidation,
   registerValidation,
-  itemsValidation
+  itemsValidation,
+  cartValidation
 };
