@@ -1,0 +1,1 @@
+web: URL_TOKEN=https://ladyymendez.us.auth0.com/oauth/token BODY_TOKEN='{"client_id":"6BdlhYwcQUeS8Pz79Q2UjYjyT4dPDiKY","client_secret":"mILzqmhTGfI2q2bEPdWPOWj8-Hn0ec28CzGnQxBLA2CUS6FVZpu0HCBaMDISVKSz","audience":"https://shopping-cart","grant_type":"client_credentials"}' npm start
