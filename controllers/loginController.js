@@ -4,12 +4,16 @@ const bcrypt = require('bcryptjs');
 const axios = require('axios');
 const { UNAUTHORIZED } = require('http-status-codes');
 const { Users } = require('../models');
-const { response, validation: { login }, valid } = require('../helpers');
+const {
+  response,
+  validation: { loginValidation },
+  valid
+} = require('../helpers');
 
 class LoginController {
   validUser(req, res) {
     const { email, password } = req.body;
-    valid(login, req)
+    valid(loginValidation, req)
       .then(() => Users.findOne({ email }))
       .then((user) => {
         if (user && bcrypt.compareSync(password, user.password)) {

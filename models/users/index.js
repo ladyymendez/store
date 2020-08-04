@@ -19,6 +19,6 @@ const userSchema = Schema({
     quantity: { type: Number, required: true }
   }],
   createdAt: { type: Date, default: Date.now }
-});
+}, { versionKey: false });
 
 module.exports = model('User', userSchema);

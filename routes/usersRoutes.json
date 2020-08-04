@@ -7,7 +7,7 @@
     "PUT": "update",
     "DELETE": "remove"
   },
-  "/users/register": {
+  "/register": {
     "POST": "add"
   }
 }
