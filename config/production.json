@@ -1,0 +1,4 @@
+{
+  "db":"mongodb+srv://lady43:lady43@shopping-store.82jvh.mongodb.net/shopping-store?retryWrites=true&w=majority",
+  "port": 3000
+}
