@@ -1,62 +1,110 @@
 /* eslint-disable class-methods-use-this */
-const { Users } = require('../models');
-const { logger } = require('../shared');
+const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
+const { INTERNAL_SERVER_ERROR } = require('http-status-codes');
+const { Users, Items } = require('../models');
+const {
+  response,
+  validation: { registerValidation },
+  valid
+} = require('../helpers');
+
+const salt = bcrypt.genSaltSync(10);
+const { ObjectId } = mongoose.Types;
 
 class UsersController {
   getAll(req, res) {
     return Users.find()
-      .then((data) => this.sendSuccess(data, req, res))
-      .catch((err) => this.sendError(res, err));
+      .then((data) => response.sendSuccess(data, req, res))
+      .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
 
   get(req, res) {
-    return Users.findOne({ _id: req.params.id })
-      .then((data) => this.sendSuccess(data, req, res))
-      .catch((err) => this.sendError(res, err));
+    return valid(registerValidation.param(), req.params)
+      .then(() => Users.findOne(
+        { _id: req.params.id }, { password: 0 }
+      ))
+      .then((data) => response.sendSuccess(data, req, res))
+      .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
 
   add(req, res) {
-    const user = new Users({
-      name: req.body.name,
-      type: req.body.type
-    });
-    return user.save()
-      .then((data) => this.sendSuccess(data, req, res))
-      .catch((err) => this.sendError(res, err));
+    const { name, email, password } = req.body;
+    return valid(registerValidation.post(), req.body)
+      .then(() => {
+        const user = new Users({
+          name,
+          email,
+          password: bcrypt.hashSync(password, salt)
+        });
+        return user.save();
+      })
+      .then((data) => response.sendSuccess(data, req, res))
+      .catch((err) => response.sendError(
+        res, INTERNAL_SERVER_ERROR, err.message
+      ));
   }
 
   update(req, res) {
-    return Users.updateOne(
-      { _id: req.params.id },
-      { $set: { name: req.body.name } }
-    )
-      .then((data) => this.sendSuccess(data, req, res))
-      .catch((err) => this.sendError(res, err));
+    return valid(registerValidation.put(), req.body)
+      .then(() => valid(registerValidation.param(), req.params))
+      .then(() => Users.updateOne(
+        { _id: req.params.id },
+        { $set: { name: req.body.name } }
+      ))
+      .then((data) => response.sendSuccess(data, req, res))
+      .catch((err) => response.sendError(
+        res, INTERNAL_SERVER_ERROR, err.message
+      ));
   }
 
   remove(req, res) {
-    return Users.deleteOne({
-      _id: req.params.id
-    })
-      .then((data) => this.sendSuccess(data, req, res))
-      .catch((err) => this.sendError(res, err));
+    return valid(registerValidation.param(), req.params)
+      .then(() => (this.removeUserItems(req.params.id)))
+      .then((data) => response.sendSuccess(data, req, res))
+      .catch((err) => response.sendError(
+        res, INTERNAL_SERVER_ERROR, err.message
+      ));
   }
 
-  sendSuccess(data, req, res) {
-    if (!data || data.nModified === 0 || data.deletedCount === 0) {
-      logger.error(`ID not found in ${req.method}, url ${req.url}`);
-      return res.status(404).json({ message: 'resource not found' });
-    }
-    return res.status(200).json(data);
-  }
-
-  sendError(res, err) {
-    const msg = { message: err };
-    if (err.kind === 'ObjectId') {
-      msg.message = 'Error Id';
-    }
-    logger.error(`Error on the server, ${msg.message}`);
-    return res.status(500).json(msg);
+  removeUserItems(sellerId) {
+    let session = null;
+    return Items.startSession()
+      .then((log) => {
+        session = log;
+        log.startTransaction();
+        return Users.aggregate([
+          { $unwind: '$cart' },
+          {
+            $lookup: {
+              from: 'items',
+              localField: 'cart.idItem',
+              foreignField: '_id',
+              as: 'cart.shopping'
+            }
+          },
+          { $unwind: '$cart.shopping' },
+          { $addFields: { 'cart.idSeller': '$cart.shopping.sellerId' } },
+          { $match: { 'cart.idSeller': ObjectId(sellerId) } },
+          { $group: { _id: '$cart.idItem' } }
+        ]);
+      })
+      .then((items) => {
+        const removedItems = items.map(({ _id }) => Users.updateMany(
+          {},
+          { $pull: { cart: { idItem: ObjectId(_id) } } },
+          { multi: true }
+        ).session(session));
+        return Promise.all(removedItems);
+      })
+      .then(() => Items.deleteMany(
+        { sellerId: ObjectId(sellerId) }
+      ).session(session))
+      .then(() => Users.deleteOne({
+        _id: sellerId
+      }).session(session))
+      .then(() => session.commitTransaction())
+      .then(() => session.endSession());
   }
 }
 

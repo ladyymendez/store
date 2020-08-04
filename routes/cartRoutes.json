@@ -1,0 +1,10 @@
+{
+  "/cart": {
+    "POST": "add"
+  },
+  "/cart/:userid": {
+    "GET": "getAll",
+    "PUT": "updateItem",
+    "DELETE": "removeItem"
+  }
+}
