@@ -14,29 +14,7 @@ class CartController {
   getAll(req, res) {
     const { userid } = req.params;
     return valid(cartValidation.puser(), req.params)
-      .then(() => Users.aggregate([
-        { $match: { _id: ObjectId(userid) } },
-        { $unwind: '$cart' },
-        {
-          $lookup: {
-            from: 'items',
-            localField: 'cart.idItem',
-            foreignField: '_id',
-            as: 'cart.shopping'
-          }
-        },
-        { $unwind: '$cart.shopping' },
-        {
-          $addFields: {
-            'cart.price': '$cart.shopping.price',
-            'cart.name': '$cart.shopping.name',
-            'cart.quantityItem': '$cart.shopping.quantity',
-            'cart.sellerId': '$cart.shopping.sellerId'
-          }
-        },
-        { $project: { 'cart.shopping': 0 } },
-        { $group: { _id: '$_id', shoppingCart: { $push: '$cart' } } }
-      ]))
+      .then(() => Users.getCart(userid))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }

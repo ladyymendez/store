@@ -62,9 +62,16 @@ const cartValidation = {
   })
 };
 
+const orderValidation = {
+  post: () => Joi.object({
+    userid: Joi.string().min(12).required()
+  })
+};
+
 module.exports = {
   loginValidation,
   registerValidation,
   itemsValidation,
-  cartValidation
+  cartValidation,
+  orderValidation
 };
