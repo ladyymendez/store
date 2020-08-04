@@ -24,6 +24,7 @@ app.use(compress());
 // app.use('*', jwtCheck.unless({ path: ['/users/register'] }));
 app.use(helmet());
 app.use(cors());
+app.use('/items', express.static(`${process.cwd()}/imagen`));
 
 const setup = (controllers, routes) => {
   expressRoutesRegistrar(app)

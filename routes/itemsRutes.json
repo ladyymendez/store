@@ -1,0 +1,10 @@
+{
+  "/items": {
+    "POST": "add"
+  },
+  "/items/:id": {
+    "GET": "get",
+    "PUT": "update",
+    "DELETE": "remove"
+  }
+}
