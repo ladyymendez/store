@@ -4,7 +4,8 @@
   "description": "Database management",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
+    "start-dev": "nodemon index.js",
     "test": "NODE_ENV=test grunt test",
     "coverage": "NODE_ENV=test grunt coverage"
   },
