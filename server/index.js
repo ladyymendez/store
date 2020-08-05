@@ -33,8 +33,8 @@ const setup = (controllers, routes) => {
     .register(routes, controllers);
 };
 
-const start = () => app.listen(port, () => {
-  logger.info('Express server started on port 3000');
+const start = () => app.listen(process.env.PORT || port, () => {
+  logger.info(`Express server started on port ${process.env.PORT || port}`);
 });
 
 const stop = () => app.close();
