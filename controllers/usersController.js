@@ -1,11 +1,13 @@
 /* eslint-disable class-methods-use-this */
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+const { url, body } = require('config');
+const axios = require('axios');
 const { INTERNAL_SERVER_ERROR } = require('http-status-codes');
 const { Users, Items } = require('../models');
 const {
   response,
-  validation: { registerValidation },
+  validation: { registerValidation, loginValidation },
   valid
 } = require('../helpers');
 
@@ -21,9 +23,7 @@ class UsersController {
 
   get(req, res) {
     return valid(registerValidation.param(), req.params)
-      .then(() => Users.findOne(
-        { _id: req.params.id }, { password: 0 }
-      ))
+      .then(() => Users.findId(req.params.id))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
   }
@@ -41,29 +41,31 @@ class UsersController {
       })
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(
-        res, INTERNAL_SERVER_ERROR, err.message
+        res, INTERNAL_SERVER_ERROR, err
       ));
   }
 
   update(req, res) {
     return valid(registerValidation.put(), req.body)
       .then(() => valid(registerValidation.param(), req.params))
-      .then(() => Users.updateOne(
-        { _id: req.params.id },
+      .then(() => Users.findId(req.params.id))
+      .then(({ _id }) => Users.updateOne(
+        { _id },
         { $set: { name: req.body.name } }
       ))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(
-        res, INTERNAL_SERVER_ERROR, err.message
+        res, INTERNAL_SERVER_ERROR, err
       ));
   }
 
   remove(req, res) {
     return valid(registerValidation.param(), req.params)
+      .then(() => Users.findId(req.params.id))
       .then(() => (this.removeUserItems(req.params.id)))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(
-        res, INTERNAL_SERVER_ERROR, err.message
+        res, INTERNAL_SERVER_ERROR, err
       ));
   }
 
@@ -105,6 +107,36 @@ class UsersController {
       }).session(session))
       .then(() => session.commitTransaction())
       .then(() => session.endSession());
+  }
+
+  validUser(req, res) {
+    const { email, password } = req.body;
+    valid(loginValidation, req.body)
+      .then(() => Users.findOne({ email }))
+      .then((user) => {
+        if (user && bcrypt.compareSync(password, user.password)) {
+          return user;
+        }
+        throw new Error('Login Unsuccessful!');
+      })
+      .then(({ _id }) => this.token()
+        .then(({ data }) => {
+          const token = { ...data };
+          token.userid = _id;
+          return token;
+        }))
+      .then((data) => response.sendSuccess(data, req, res))
+      .catch((error) => response.sendError(
+        res,
+        INTERNAL_SERVER_ERROR,
+        error.message
+      ));
+  }
+
+  token() {
+    return axios.post(url, body, {
+      headers: { 'content-type': 'application/json' }
+    });
   }
 }
 

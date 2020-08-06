@@ -9,5 +9,8 @@
   },
   "/register": {
     "POST": "add"
+  },
+  "/login": {
+    "POST": "validUser"
   }
 }

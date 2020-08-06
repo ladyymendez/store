@@ -1,8 +1,14 @@
 const chai = require('chai');
 const express = require('express');
 const chaiHttp = require('chai-http');
-const { OK, INTERNAL_SERVER_ERROR, NOT_FOUND } = require('http-status-codes');
 const expressRoutesRegistrar = require('express-routes-registrar');
+const {
+  OK,
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+  UNAUTHORIZED
+} = require('http-status-codes');
+
 const db = require('../mongodb');
 const { usersRoutes } = require('../routes');
 const { usersController } = require('../controllers');
@@ -39,49 +45,70 @@ describe('Users Routes', () => {
       .then(() => done());
   });
 
-  describe('Create /users', () => {
-    it('save a new user (name, type)', () => (
+  describe('Create user /register', () => {
+    it('save a new user (name, email,password)', () => (
       requester
-        .post('/users')
-        .send({ name: 'LOL', type: 'employee' })
+        .post('/register')
+        .send({ name: 'Laura', email: 'laura@gmail.com', password: 'laura123' })
         .then(({ body, statusCode }) => {
-          expect(body).to.an('object');
+          expect(body).to.an('object').eql({ message: 'Register Successful' });
           expect(statusCode).to.equal(OK);
-        })
-    ));
-    it('error to save a new user without parameters', () => (
-      requester
-        .post('/users')
-        .send({ })
-        .then(({ statusCode, body: { message: { _message } } }) => {
-          expect(_message).to.equal('User validation failed');
-          expect(statusCode).to.equal(INTERNAL_SERVER_ERROR);
         })
     ));
   });
 
-  describe('Read /users', () => {
-    it('should return json as listo of users', () => (
+  describe('Login user /login', () => {
+    it('Login user (email, password)', () => (
       requester
-        .get('/users')
+        .post('/login')
+        .send({ email: 'laura@gmail.com', password: 'laura123' })
         .then(({ body, statusCode }) => {
-          expect(body).to.an('array');
+          ID = body.userid;
+          expect(body).to.have.all.keys(
+            'userid',
+            'token_type',
+            'expires_in',
+            'access_token'
+          );
           expect(statusCode).to.equal(OK);
+        })
+    ));
+    it('error to log a user with wrong parameters', () => (
+      requester
+        .post('/login')
+        .send({ email: 'laura@gmail.com', password: 'laura122' })
+        .then(({ statusCode, body }) => {
+          expect(body).to.an('object').eql({ message: 'Login Unsuccessful!' });
+          expect(statusCode).to.equal(UNAUTHORIZED);
         })
     ));
   });
 
   describe('Read /users/:id', () => {
-    before(() => (
-      Users.findOne().then(({ _id }) => {
-        ID = _id;
-      })
-    ));
     it('should return an user by id', () => (
       requester
         .get(`/users/${ID}`)
         .then(({ body, statusCode }) => {
           expect(body).to.an('object');
+          expect(body).to.have.all.keys(
+            '_id',
+            'name',
+            'email',
+            'addresses',
+            'cart',
+            'createdAt'
+          );
+          expect(statusCode).to.equal(OK);
+        })
+    ));
+  });
+
+  describe('Read /users', () => {
+    it('should return json as user list', () => (
+      requester
+        .get('/users')
+        .then(({ body, statusCode }) => {
+          expect(body).to.an('array');
           expect(statusCode).to.equal(OK);
         })
     ));
@@ -92,7 +119,8 @@ describe('Users Routes', () => {
       requester
         .put(`/users/${ID}`)
         .send({ name: 'Katrina' })
-        .then(({ statusCode }) => {
+        .then(({ statusCode, body }) => {
+          expect(body).to.an('object').eql({ message: 'Updated Successful' });
           expect(statusCode).to.equal(OK);
         })
     ));
@@ -102,7 +130,8 @@ describe('Users Routes', () => {
     it('should delete an user by id', () => (
       requester
         .delete(`/users/${ID}`)
-        .then(({ statusCode }) => {
+        .then(({ statusCode, body }) => {
+          expect(body).to.an('object').eql({ message: 'Deleted Successful' });
           expect(statusCode).to.equal(OK);
         })
     ));
@@ -119,6 +148,7 @@ describe('Users Routes', () => {
     it('Put should return 404', () => (
       requester
         .put('/users/123456789111')
+        .send({ name: 'Laura' })
         .then(({ statusCode }) => {
           expect(statusCode).to.equal(NOT_FOUND);
         })
@@ -132,25 +162,43 @@ describe('Users Routes', () => {
     ));
   });
 
-  describe('Error on the server if id.length < 12 /users/:id', () => {
+  describe('Error on the server if missing or wrong fields', () => {
     it('Read should return 500', () => (
       requester
-        .get('/users/123')
+        .get('/users/1111111111')
         .then(({ statusCode }) => {
           expect(statusCode).to.equal(INTERNAL_SERVER_ERROR);
         })
     ));
     it('Put should return 500', () => (
       requester
-        .put('/users/123')
+        .put('/users/1111111111')
         .then(({ statusCode }) => {
           expect(statusCode).to.equal(INTERNAL_SERVER_ERROR);
         })
     ));
     it('Delete should return 500', () => (
       requester
-        .delete('/users/123')
+        .delete('/users/1111111111')
         .then(({ statusCode }) => {
+          expect(statusCode).to.equal(INTERNAL_SERVER_ERROR);
+        })
+    ));
+    it('error to save a new user without parameters', () => (
+      requester
+        .post('/register')
+        .send({ })
+        .then(({ statusCode, body: { message } }) => {
+          expect(message).to.match(/(is required)/);
+          expect(statusCode).to.equal(INTERNAL_SERVER_ERROR);
+        })
+    ));
+    it('error to login a user without parameters', () => (
+      requester
+        .post('/login')
+        .send({ })
+        .then(({ statusCode, body: { message } }) => {
+          expect(message).to.match(/(is required)/);
           expect(statusCode).to.equal(INTERNAL_SERVER_ERROR);
         })
     ));

@@ -22,6 +22,11 @@ const userSchema = Schema({
 }, { versionKey: false });
 
 userSchema.statics = {
+  findId(id) {
+    return this.findOne({ _id: id }, { password: 0 })
+      .then((user) => ((user) || Promise.reject({ message: 'Not found' })));
+  },
+
   getCart(id) {
     return this.aggregate([
       { $match: { _id: Types.ObjectId(id) } },
