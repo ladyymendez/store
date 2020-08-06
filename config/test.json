@@ -1,4 +1,4 @@
 {
-  "db":"mongodb://lady43:lady43@ds147946.mlab.com:47946/userstest",
+  "db":"mongodb+srv://lady43:lady43@cluster0.b5mbe.mongodb.net/cluster0?retryWrites=true&w=majority",
   "port": 3000
 }
