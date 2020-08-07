@@ -6,7 +6,7 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
  URL_TOKEN="XXXXXX" BODY_TOKEN="XXXX" npm run start-dev
 ```
 
-Ejecucion de pruebas
+#### Ejecucion de pruebas
 
 ```
  NODE_ENV=test URL_TOKEN="XXXXXX" BODY_TOKEN="XXXX" grunt test
@@ -22,11 +22,11 @@ Al momenento de logearse en la ruta `/login`, se obtiene un token el cual sirve 
 ```
 
 ## Login
-**Envias:**  Credenciales para logear.
-
 **Request:**
 
 - POST /login
+
+**Envias:**  Credenciales para logear.
 
 ```json
 {
@@ -164,8 +164,11 @@ Al momenento de logearse en la ruta `/login`, se obtiene un token el cual sirve 
 ```
 
 **Failed Response: 404** 
+
 Si el id de usuario es incorrecto
+
 Peticiones:
+
 - DELETE /users/:id
 - GET /users/:id
 - PUT /users/:id
@@ -177,8 +180,11 @@ Peticiones:
 ```
 
 **Failed Response: 500**
+
 Cuando los campos sean requeridos
+
 Peticiones:
+
 - POST /login
 - POST /register
 - PUT /users/:id
