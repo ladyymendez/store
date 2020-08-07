@@ -169,38 +169,6 @@ Al momenento de logearse en la ruta `/login`, se obtiene un token el cual sirve 
 }
 ```
 
-**Failed Response: 404** 
-
-Si el id de usuario es incorrecto
-
-Peticiones:
-
-- DELETE /users/:id
-- GET /users/:id
-- PUT /users/:id
-
-```json
-{
-    "message": "Resource not found"
-}
-```
-
-**Failed Response: 500**
-
-Cuando los campos sean requeridos
-
-Peticiones:
-
-- POST /login
-- POST /register
-- PUT /users/:id
-
-```json
-{
-    "message": "\"xxxxx\" is required"
-}
-```
-
 ## Items
 
 **Request:**
@@ -291,7 +259,6 @@ Peticiones:
 }
 ```
 
-
 **Obtienes:** un objeto del item con los campos actualizados
 
 ```json
@@ -320,7 +287,6 @@ Peticiones:
 	/items/XXXXXXXXXXXX
 ```
 
-
 **Obtienes:**  msj de operacion exitosa
 
 **Successful Response::**
@@ -331,11 +297,42 @@ Peticiones:
 }
 ```
 
-**Failed Response::**
+## Failed Responses 404-500
+
+**Failed Response: 404**
+
+Si el id de usuario es incorrecto
+
+Peticiones:
+
+- DELETE /users/:id
+- GET /users/:id
+- PUT /users/:id
+- GET /items/:id
+- PUT /items/:id
+- DELETE /items/:id
 
 ```json
 {
-    "message": "\"XXXXX\" is required"
+    "message": "Resource not found"
+}
+```
+
+**Failed Response: 500**
+
+Cuando los campos sean requeridos
+
+Peticiones:
+
+- POST /login
+- POST /register
+- PUT /users/:id
+- POST /items
+- PUT /items
+
+```json
+{
+    "message": "\"xxxxx\" is required"
 }
 ```
 
@@ -389,7 +386,6 @@ word -> busca por palabras en el campo de description del item
 
 - Header: Token
 - Query [optional]: sort=price, sort=-price , word=XXXX, sort=quantity, sort=-quantity.
-
 
 **Obtienes:**  array de objetos de todos los items creados
 

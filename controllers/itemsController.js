@@ -24,22 +24,22 @@ class ItemsController {
         .then(() => itemCreated))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(
-        res, INTERNAL_SERVER_ERROR, err.message
+        res, INTERNAL_SERVER_ERROR, err
       ));
   }
 
   get(req, res) {
     return valid(itemsValidation.param(), req.params)
-      .then(() => Items.findOne({ _id: req.params.id }))
+      .then(() => Items.findId(req.params.id))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(
-        res, INTERNAL_SERVER_ERROR, err.message
+        res, INTERNAL_SERVER_ERROR, err
       ));
   }
 
   update(req, res) {
     return valid(itemsValidation.param(), req.params)
-      .then(() => Items.findById({ _id: req.params.id }))
+      .then(() => Items.findId(req.params.id))
       .then((item) => Items.findOneAndUpdate(
         { _id: req.params.id },
         {
@@ -56,20 +56,21 @@ class ItemsController {
       ))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(
-        res, INTERNAL_SERVER_ERROR, err.message
+        res, INTERNAL_SERVER_ERROR, err
       ));
   }
 
   remove(req, res) {
     return valid(itemsValidation.param(), req.params)
-      .then(() => this.removeItems(req.params.id))
+      .then(() => Items.findId(req.params.id))
+      .then((item) => this.removeItem(req.params.id, item))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(
-        res, INTERNAL_SERVER_ERROR, err.message
+        res, INTERNAL_SERVER_ERROR, err
       ));
   }
 
-  removeItems(idItem) {
+  removeItem(idItem, item) {
     let session = null;
     return Items.startSession()
       .then((log) => {
@@ -87,7 +88,15 @@ class ItemsController {
         ).session(session)
       ))
       .then(() => session.commitTransaction())
-      .then(() => session.endSession());
+      .then(() => session.endSession())
+      .then(() => this.removeFileImg(item));
+  }
+
+  removeFileImg(item) {
+    if (fs.existsSync(`img/${item.sellerId}`)) {
+      return fs.unlinkSync(`img/${item.imagen.split('items/')[1]}`);
+    }
+    return 1;
   }
 
   nameImg(name) {

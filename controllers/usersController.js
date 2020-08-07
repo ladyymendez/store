@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const { url, body } = require('config');
 const axios = require('axios');
+const prom = require('fs').promises;
 const { INTERNAL_SERVER_ERROR } = require('http-status-codes');
 const { Users, Items } = require('../models');
 const {
@@ -104,7 +105,12 @@ class UsersController {
         _id: sellerId
       }).session(session))
       .then(() => session.commitTransaction())
-      .then(() => session.endSession());
+      .then(() => session.endSession())
+      .then(() => this.removeFolderImgs(sellerId));
+  }
+
+  removeFolderImgs(id) {
+    return prom.rmdir(`img/${id}`, { recursive: true });
   }
 
   validUser(req, res) {
