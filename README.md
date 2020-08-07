@@ -12,6 +12,12 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
  NODE_ENV=test URL_TOKEN="XXXXXX" BODY_TOKEN="XXXX" grunt test
 ```
 
+#### Ejecucion de covertura
+
+```
+ NODE_ENV=test URL_TOKEN="XXXXXX" BODY_TOKEN="XXXX" grunt coverage
+```
+
 ## Token
 Al momenento de logearse en la ruta `/login`, se obtiene un token el cual sirve para realizar las demas peticiones, las unicas rutas que no necesitan token son `/login` y `/register`.
 

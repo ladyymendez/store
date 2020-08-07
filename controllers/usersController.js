@@ -121,7 +121,7 @@ class UsersController {
       })
       .then(({ _id }) => this.token()
         .then(({ data }) => {
-          const token = { ...data };
+          const token = data;
           token.userid = _id;
           return token;
         }))
