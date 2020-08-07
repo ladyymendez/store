@@ -1,17 +1,32 @@
 # Back-end Lady Mendez
 ## Deploy
-Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son proporcionados creando un proyecto en Auth0.
+Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son proporcionados creando un proyecto en Auth0, puedes checar el proyecto en [producción](https://afternoon-dusk-31062.herokuapp.com/)
 
 ```
  URL_TOKEN="XXXXXX" BODY_TOKEN="XXXX" npm run start-dev
 ```
 
-## Login
-**Envias:**  Credenciales para logear.
+#### Ejecucion de pruebas
 
+```
+ NODE_ENV=test URL_TOKEN="XXXXXX" BODY_TOKEN="XXXX" grunt test
+```
+
+## Token
+Al momenento de logearse en la ruta `/login`, se obtiene un token el cual sirve para realizar las demas peticiones, las unicas rutas que no necesitan token son `/login` y `/register`.
+
+##### Forma de enviar el token en el 
+
+```
+	-- 'authorization: Bearer XXXXXXX'
+```
+
+## Login
 **Request:**
 
 - POST /login
+
+**Envias:**  Credenciales para logear.
 
 ```json
 {
@@ -45,18 +60,20 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
 ## Register
 
 **Request:**
-**Envias:**  Datos para registrarse.
-**Obtienes:** Un mensaje de registro exitoso para logearse posteriormente
 
 - POST /register
 
+**Envias:**  Datos para registrarse.
+
 ```json
 {
-	"name": "Laura"
+	"name": "Laura",
     "email": "XXX@XXXX.XXX",
     "password": "XXXXXX"
 }
 ```
+
+**Obtienes:** Un mensaje de registro exitoso para logearse posteriormente
 
 **Successful Response::**
 
@@ -66,21 +83,15 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
 }
 ```
 
-**Failed Response::**
-
-```json
-{
-    "message": "\"xxxxx\" is required"
-}
-```
-
 **Request:**
 
 - PUT /users/:id
 
 **Envias:**
-- header el Token
+
+- Header: Token
 - Params: Id usuario a actualizar.
+- Body: campo 'nombre' a actualizar.
 
 
 ```
@@ -102,20 +113,13 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
 }
 ```
 
-**Failed Response::**
-
-```json
-{
-    "message": "Resource not found"
-}
-```
-
 **Request:**
 
 - GET /users/:id
 
 **Envias:**
-- header el Token
+
+- Header: Token
 - Params: Id del usuario a consultar.
 
 ```
@@ -136,20 +140,13 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
 }
 ```
 
-**Failed Response::**
-
-```json
-{
-    "message": "Resource not found"
-}
-```
-
 **Request:**
 
 - DELETE /users/:id
 
 **Envias:**
-- header el Token
+
+- Header: Token
 - Params: Id del usuario a eliminar.
 
 ```
@@ -157,7 +154,6 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
 ```
 
 **Obtienes:**  msj de operacion exitosa
-
 
 **Successful Response::**
 
@@ -167,11 +163,35 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
 }
 ```
 
-**Failed Response::**
+**Failed Response: 404** 
+
+Si el id de usuario es incorrecto
+
+Peticiones:
+
+- DELETE /users/:id
+- GET /users/:id
+- PUT /users/:id
 
 ```json
 {
     "message": "Resource not found"
+}
+```
+
+**Failed Response: 500**
+
+Cuando los campos sean requeridos
+
+Peticiones:
+
+- POST /login
+- POST /register
+- PUT /users/:id
+
+```json
+{
+    "message": "\"xxxxx\" is required"
 }
 ```
 
@@ -183,13 +203,8 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
 
 **Envias:**
 
-- header el Token
+- Header: Token
 - Body: Campos correspondientes para crear un item
-
-
-```
-	--header 'authorization: Bearer XXXXXXX'
-```
 
 ```json
 {
@@ -220,15 +235,13 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
 }
 ```
 
-
-
 **Request:**
 
 - GET /items/:id
 
 **Envias:**
 
-- header el Token
+- Header: Token
 - Params: id registro a consultar.
 
 ```
@@ -255,13 +268,9 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
 
 **Envias:**
 
-- header el Token
+- Header: Token
 - Params: id registro a actualizar.
 - Body: campos que se desean actualizar
-
-```
-	--header 'authorization: Bearer XXXXXXX'
-```
 
 ```json
 {
@@ -298,7 +307,7 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
 
 **Envias:**
 
-- Header : Token
+- Header: Token
 - Params: id registro a eliminar.
 
 ```
@@ -331,7 +340,7 @@ Para ejecutar la aplicacion necesitas "URL_TOKEN", y "BODY_TOKEN" los cuales son
 
 **Envias:**
 
-- Header : Token
+- Header: Token
 - Params: id del usuario que deseas consultar sus productos creados.
 - Query [optional]: sort=price, sort=-price , word=XXXX, sort=quantity, sort=-quantity.
 
@@ -372,7 +381,7 @@ word -> busca por palabras en el campo de description del item
 
 **Envias:**
 
-- Header : Token
+- Header: Token
 - Query [optional]: sort=price, sort=-price , word=XXXX, sort=quantity, sort=-quantity.
 
 
@@ -407,7 +416,7 @@ word -> busca por palabras en el campo de description del item
 
 **Envias:**
 
-- Header : Token
+- Header: Token
 - Body: con los campos correspondientes para agregar el item al carrito
 
 ```json
@@ -425,7 +434,7 @@ word -> busca por palabras en el campo de description del item
 
 **Envias:**
 
-- Header : Token
+- Header: Token
 - Params: id del usuario que deseamos consultar su carrito
 
 ```
@@ -459,7 +468,7 @@ word -> busca por palabras en el campo de description del item
 
 **Envias:**
 
-- Header : Token
+- Header: Token
 - Params: Id del usuario a actualizar su carrito
 - Body: con los campos correspondientes a actualizar
 
@@ -483,7 +492,7 @@ word -> busca por palabras en el campo de description del item
 
 **Envias:**
 
-- Header : Token
+- Header: Token
 - Params: Id del usuario que eliminara un producto de su carrito
 - Body: id del item a eliminar
 
@@ -508,7 +517,7 @@ word -> busca por palabras en el campo de description del item
 
 **Envias:**
 
-- Header : Token
+- Header: Token
 - Body: id del usuario
 
 
@@ -542,7 +551,6 @@ word -> busca por palabras en el campo de description del item
 
 ```
 
-
 ## History
 
 **Request:**
@@ -551,9 +559,8 @@ word -> busca por palabras en el campo de description del item
 
 **Envias:**
 
-- Header : Token
+- Header: Token
 - params: id del usuario que se consultaran sus compras
-
 
 ```
 	/history/shopping/XXXXXXXXXX
@@ -589,9 +596,8 @@ word -> busca por palabras en el campo de description del item
 
 **Envias:**
 
-- Header : Token
+- Header: Token
 - params: id del usuario que se desea saber sus ventas
-
 
 ```
 	/history/sales/XXXXXXXXXX
@@ -620,5 +626,4 @@ word -> busca por palabras en el campo de description del item
         ]
     }
 ]
-
 ```

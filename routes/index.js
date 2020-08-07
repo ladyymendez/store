@@ -1,5 +1,4 @@
 const usersRoutes = require('./usersRoutes');
-const loginRoutes = require('./loginRoutes');
 const itemsRoutes = require('./itemsRoutes');
 const cartRoutes = require('./cartRoutes');
 const ordersRoutes = require('./ordersRoutes');
@@ -8,7 +7,6 @@ const historyRoutes = require('./historyRoutes');
 
 module.exports = {
   usersRoutes,
-  loginRoutes,
   itemsRoutes,
   cartRoutes,
   ordersRoutes,
