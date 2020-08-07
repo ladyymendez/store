@@ -29,13 +29,11 @@ class UsersController {
   }
 
   add(req, res) {
-    const { name, email, password } = req.body;
     return valid(registerValidation.post(), req.body)
       .then(() => {
         const user = new Users({
-          name,
-          email,
-          password: bcrypt.hashSync(password, salt)
+          ...req.body,
+          password: bcrypt.hashSync(req.body.password, salt)
         });
         return user.save();
       })
