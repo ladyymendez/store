@@ -17,7 +17,7 @@ class ItemsController {
   add(req, res) {
     const { body } = req;
     const urlImgName = this.getUrlImg(req);
-    const item = new Items({ ...body, imagen: urlImgName[0] });
+    const item = new Items(Object.assign(body, { imagen: urlImgName[0] }));
     return valid(itemsValidation.post(), body)
       .then(() => item.save())
       .then((itemCreated) => this.saveImg(req, urlImgName[1])

@@ -32,10 +32,10 @@ class UsersController {
   add(req, res) {
     return valid(registerValidation.post(), req.body)
       .then(() => {
-        const user = new Users({
-          ...req.body,
-          password: bcrypt.hashSync(req.body.password, salt)
-        });
+        const user = new Users(Object.assign(
+          req.body,
+          { password: bcrypt.hashSync(req.body.password, salt) }
+        ));
         return user.save();
       })
       .then((data) => response.sendSuccess(data, req, res))
