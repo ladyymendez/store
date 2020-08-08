@@ -14,4 +14,11 @@ const productSchema = Schema({
   createAt: { type: Date, default: Date.now }
 }, { versionKey: false });
 
+productSchema.statics = {
+  findId(id) {
+    return this.findOne({ _id: id })
+      .then((item) => ((item) || Promise.reject({ message: 'Not found' })));
+  }
+};
+
 module.exports = model('Item', productSchema);

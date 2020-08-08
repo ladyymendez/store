@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const { url, body } = require('config');
 const axios = require('axios');
+const prom = require('fs').promises;
 const { INTERNAL_SERVER_ERROR } = require('http-status-codes');
 const { Users, Items } = require('../models');
 const {
@@ -29,14 +30,12 @@ class UsersController {
   }
 
   add(req, res) {
-    const { name, email, password } = req.body;
     return valid(registerValidation.post(), req.body)
       .then(() => {
-        const user = new Users({
-          name,
-          email,
-          password: bcrypt.hashSync(password, salt)
-        });
+        const user = new Users(Object.assign(
+          req.body,
+          { password: bcrypt.hashSync(req.body.password, salt) }
+        ));
         return user.save();
       })
       .then((data) => response.sendSuccess(data, req, res))
@@ -106,7 +105,12 @@ class UsersController {
         _id: sellerId
       }).session(session))
       .then(() => session.commitTransaction())
-      .then(() => session.endSession());
+      .then(() => session.endSession())
+      .then(() => this.removeFolderImgs(sellerId));
+  }
+
+  removeFolderImgs(id) {
+    return prom.rmdir(`img/${id}`, { recursive: true });
   }
 
   validUser(req, res) {
@@ -121,7 +125,7 @@ class UsersController {
       })
       .then(({ _id }) => this.token()
         .then(({ data }) => {
-          const token = { ...data };
+          const token = data;
           token.userid = _id;
           return token;
         }))
