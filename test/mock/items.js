@@ -1,4 +1,4 @@
-const { redEyes, kuribou } = require('../img');
+// const { redEyes, kuribou } = require('../img');
 
 const itemsMock = [{
   sellerId: '5f29aa77ca76e9494b20b492',
