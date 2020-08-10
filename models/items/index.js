@@ -16,7 +16,7 @@ const productSchema = Schema({
 
 productSchema.statics = {
   findId(id) {
-    return this.findOne({ _id: id })
+    return this.findOne(id)
       .then((item) => ((item) || Promise.reject({ message: 'Not found' })));
   }
 };

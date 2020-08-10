@@ -20,6 +20,7 @@ class InventoryController {
     const filter = this.getFilter(req);
     filter.sellerId = id;
     return valid(idParams, req.params)
+      .then(() => Items.findId({ sellerId: req.params.id }))
       .then(() => Items.find(filter).sort(req.query.sort))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));

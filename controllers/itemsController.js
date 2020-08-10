@@ -30,7 +30,7 @@ class ItemsController {
 
   get(req, res) {
     return valid(itemsValidation.param(), req.params)
-      .then(() => Items.findId(req.params.id))
+      .then(() => Items.findId({ _id: req.params.id }))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(
         res, INTERNAL_SERVER_ERROR, err
@@ -39,7 +39,7 @@ class ItemsController {
 
   update(req, res) {
     return valid(itemsValidation.param(), req.params)
-      .then(() => Items.findId(req.params.id))
+      .then(() => Items.findId({ _id: req.params.id }))
       .then((item) => Items.findOneAndUpdate(
         { _id: req.params.id },
         {
@@ -62,7 +62,7 @@ class ItemsController {
 
   remove(req, res) {
     return valid(itemsValidation.param(), req.params)
-      .then(() => Items.findId(req.params.id))
+      .then(() => Items.findId({ _id: req.params.id }))
       .then((item) => this.removeItem(req.params.id, item))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(

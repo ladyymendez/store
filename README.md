@@ -297,45 +297,6 @@ Al momenento de logearse en la ruta `/login`, se obtiene un token el cual sirve 
 }
 ```
 
-## Failed Responses 404-500
-
-**Failed Response: 404**
-
-Si el id de usuario es incorrecto
-
-Peticiones:
-
-- DELETE /users/:id
-- GET /users/:id
-- PUT /users/:id
-- GET /items/:id
-- PUT /items/:id
-- DELETE /items/:id
-
-```json
-{
-    "message": "Resource not found"
-}
-```
-
-**Failed Response: 500**
-
-Cuando los campos sean requeridos
-
-Peticiones:
-
-- POST /login
-- POST /register
-- PUT /users/:id
-- POST /items
-- PUT /items
-
-```json
-{
-    "message": "\"xxxxx\" is required"
-}
-```
-
 ## Invantario
 **Request:**
 
@@ -409,6 +370,46 @@ word -> busca por palabras en el campo de description del item
     ...
 ]
 
+```
+
+## Failed Responses 404-500
+
+**Failed Response: 404**
+
+Si el id de usuario es incorrecto
+
+Peticiones:
+
+- DELETE /users/:id
+- GET /users/:id
+- PUT /users/:id
+- GET /items/:id
+- PUT /items/:id
+- DELETE /items/:id
+- GET /inventory/:id
+
+```json
+{
+    "message": "Resource not found"
+}
+```
+
+**Failed Response: 500**
+
+Cuando los campos sean requeridos
+
+Peticiones:
+
+- POST /login
+- POST /register
+- PUT /users/:id
+- POST /items
+- PUT /items
+
+```json
+{
+    "message": "\"xxxxx\" is required"
+}
 ```
 
 ## Carrito
