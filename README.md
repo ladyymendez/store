@@ -644,6 +644,7 @@ Peticiones:
 - DELETE /items/:id
 - GET /inventory/:id
 - GET /cart/:id
+- POST /orders/
 
 ```json
 {
@@ -665,6 +666,7 @@ Peticiones:
 - POST /cart
 - PUT /cart/:id
 - DELETE /cart/:id
+- POST /orders/
 
 ```json
 {

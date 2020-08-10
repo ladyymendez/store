@@ -13,6 +13,7 @@ const { ObjectId } = mongoose.Types;
 class OrdersController {
   add(req, res) {
     return valid(orderValidation.post(), req.body)
+      .then(() => Users.findId(req.body.userid))
       .then(() => Users.getCart(req.body.userid))
       .then((cart) => this.substractProducts(cart[0]))
       .then((data) => response.sendSuccess(data, req, res))
