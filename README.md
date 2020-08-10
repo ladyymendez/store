@@ -372,46 +372,6 @@ word -> busca por palabras en el campo de description del item
 
 ```
 
-## Failed Responses 404-500
-
-**Failed Response: 404**
-
-Si el id de usuario es incorrecto
-
-Peticiones:
-
-- DELETE /users/:id
-- GET /users/:id
-- PUT /users/:id
-- GET /items/:id
-- PUT /items/:id
-- DELETE /items/:id
-- GET /inventory/:id
-
-```json
-{
-    "message": "Resource not found"
-}
-```
-
-**Failed Response: 500**
-
-Cuando los campos sean requeridos
-
-Peticiones:
-
-- POST /login
-- POST /register
-- PUT /users/:id
-- POST /items
-- PUT /items
-
-```json
-{
-    "message": "\"xxxxx\" is required"
-}
-```
-
 ## Carrito
 **Request:**
 
@@ -430,6 +390,25 @@ Peticiones:
 }
 
 ```
+**Obtienes:**  Un objeto con clave shoppingCart que regresa el item agregado
+
+```json
+[
+    {
+        "_id": "XXXXXXXXXXXX",
+        "shoppingCart": [
+            {
+                "idItem": "XXXXXXXXXXXX",
+                "name": "XXXXXXXXXXXX",
+                "price": 20,
+                "quantity": 12,
+                "quantityItem": 100,
+                "sellerId": "XXXXXXXXXXXX"
+            }
+        ]
+    }
+]
+```
 
 **Request:**
 
@@ -444,7 +423,7 @@ Peticiones:
 	/cart/XXXXXXXXXX
 ```
 
-**Obtienes:**  array de objetos de los items que se han anexado al carrito el usuario
+**Obtienes:**  array de objetos con clave shoppingCart de los items que se han anexado al carrito el usuario
 ```json
 [
     {
@@ -487,7 +466,25 @@ Peticiones:
 
 ```
 
-**Obtienes:**  mensaje de actualizacion exitosa
+**Obtienes:**  Un objeto con una clave shoppingCart que regresa el item actualizado
+
+```json
+[
+    {
+        "_id": "XXXXXXXXXXXX",
+        "shoppingCart": [
+            {
+                "idItem": "XXXXXXXXXXXX",
+                "name": "XXXXXXXXXXXX",
+                "price": 20,
+                "quantity": 12,
+                "quantityItem": 100,
+                "sellerId": "XXXXXXXXXXXX"
+            }
+        ]
+    }
+]
+```
 
 **Request:**
 
@@ -629,4 +626,50 @@ Peticiones:
         ]
     }
 ]
+```
+
+## Failed Responses 404-500
+
+**Failed Response: 404**
+
+Si el id de usuario es incorrecto
+
+Peticiones:
+
+- DELETE /users/:id
+- GET /users/:id
+- PUT /users/:id
+- GET /items/:id
+- PUT /items/:id
+- DELETE /items/:id
+- GET /inventory/:id
+- GET /cart/:id
+- POST /orders/
+
+```json
+{
+    "message": "Resource not found"
+}
+```
+
+**Failed Response: 500**
+
+Cuando los campos sean requeridos
+
+Peticiones:
+
+- POST /login
+- POST /register
+- PUT /users/:id
+- POST /items
+- PUT /items
+- POST /cart
+- PUT /cart/:id
+- DELETE /cart/:id
+- POST /orders/
+
+```json
+{
+    "message": "\"xxxxx\" is required"
+}
 ```

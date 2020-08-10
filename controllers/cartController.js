@@ -14,6 +14,7 @@ class CartController {
   getAll(req, res) {
     const { userid } = req.params;
     return valid(cartValidation.puser(), req.params)
+      .then(() => Users.findId(userid))
       .then(() => Users.getCart(userid))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(res, INTERNAL_SERVER_ERROR, err));
