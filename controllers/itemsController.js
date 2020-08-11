@@ -17,10 +17,11 @@ class ItemsController {
   add(req, res) {
     const { body } = req;
     const urlImgName = this.getUrlImg(req);
+    const img = req.body.imagen;
     const item = new Items(Object.assign(body, { imagen: urlImgName[0] }));
     return valid(itemsValidation.post(), body)
       .then(() => item.save())
-      .then((itemCreated) => this.saveImg(req, urlImgName[1])
+      .then((itemCreated) => this.saveImg(img, req, urlImgName[1])
         .then(() => itemCreated))
       .then((data) => response.sendSuccess(data, req, res))
       .catch((err) => response.sendError(
@@ -113,9 +114,9 @@ class ItemsController {
     return [`${protocol}://${host}/items/${body.sellerId}/${nameImg}`, nameImg];
   }
 
-  saveImg(req, nameImg) {
-    const { imagen, sellerId } = req.body;
-    const base64Image = imagen.split(';base64,').pop();
+  saveImg(img, req, nameImg) {
+    const { sellerId } = req.body;
+    const base64Image = img.split(';base64,').pop();
     const dir = `img/${sellerId}`;
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);

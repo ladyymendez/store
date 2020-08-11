@@ -26,7 +26,7 @@ app.use(compress());
 app.use(helmet());
 app.use(cors());
 
-app.use('*', jwtCheck.unless({ path: ['/register', '/login'] }));
+app.use('*', jwtCheck.unless({ path: ['/register', '/login', '/items'] }));
 app.use('/items', express.static(`${process.cwd()}/img`));
 
 const setup = (controllers, routes) => {
